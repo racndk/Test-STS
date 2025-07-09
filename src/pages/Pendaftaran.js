@@ -17,7 +17,39 @@ function Pendaftaran() {
     kecamatan: user.kecamatan || '',
     kelurahan: user.kelurahan || '',
   });
-
+  const provinsiOptions = [
+    { value: 'dki jakarta', label: 'DKI Jakarta' },
+    { value: 'jawa barat', label: 'Jawa Barat' },
+  ];
+  
+  const kabupatenOptions = {
+    'dki jakarta': [
+      { value: 'jakarta timur', label: 'Jakarta Timur' },
+    ],
+    'jawa barat': [
+      { value: 'bandung', label: 'Bandung' },
+    ],
+  };
+  const kecamatanOptions = {
+    'jakarta timur': [
+      { value: 'cakung', label: 'Cakung' },
+    ],
+    'bandung': [
+      { value: 'coblong', label: 'Coblong' },
+    ],
+  };
+  
+  const kelurahanOptions = {
+    'cakung': [
+      { value: 'ujung menteng', label: 'Ujung Menteng' },
+      { value: 'cakung barat', label: 'Cakung Barat' },
+    ],
+    'coblong': [
+      { value: 'lebak gede', label: 'Lebak Gede' },
+      { value: 'dago', label: 'Dago' },
+    ],
+  };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -67,22 +99,66 @@ function Pendaftaran() {
 
           <div className="form-group">
             <label>Provinsi</label>
-            <input type="text" name="provinsi" value={formData.provinsi} onChange={handleChange} required />
+            <select name="provinsi" value={formData.provinsi} onChange={(e) => {
+              const selectedProvinsi = e.target.value;
+              setFormData(prev => ({
+                ...prev,
+                provinsi: selectedProvinsi,
+                kabupaten: '' // reset kabupaten saat provinsi ganti
+              }));
+            }} required>
+              <option value="">-- Pilih Provinsi --</option>
+              {provinsiOptions.map((prov) => (
+                <option key={prov.value} value={prov.value}>{prov.label}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
             <label>Kabupaten</label>
-            <input type="text" name="kabupaten" value={formData.kabupaten} onChange={handleChange} required />
+            <select name="kabupaten" value={formData.kabupaten} onChange={handleChange} required>
+              <option value="">-- Pilih Kabupaten --</option>
+              {kabupatenOptions[formData.provinsi]?.map((kab) => (
+                <option key={kab.value} value={kab.value}>{kab.label}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
             <label>Kecamatan</label>
-            <input type="text" name="kecamatan" value={formData.kecamatan} onChange={handleChange} required />
+            <select
+              name="kecamatan"
+              value={formData.kecamatan}
+              onChange={(e) => {
+                const selectedKecamatan = e.target.value;
+                setFormData(prev => ({
+                  ...prev,
+                  kecamatan: selectedKecamatan,
+                  kelurahan: '', // reset kelurahan jika kecamatan ganti
+                }));
+              }}
+              required
+            >
+              <option value="">-- Pilih Kecamatan --</option>
+              {kecamatanOptions[formData.kabupaten]?.map((kec) => (
+                <option key={kec.value} value={kec.value}>{kec.label}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
             <label>Kelurahan</label>
-            <input type="text" name="kelurahan" value={formData.kelurahan} onChange={handleChange} required />
+            <select
+              name="kelurahan"
+              value={formData.kelurahan}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Pilih Kelurahan --</option>
+              {kelurahanOptions[formData.kecamatan]?.map((kel) => (
+                <option key={kel.value} value={kel.value}>{kel.label}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group full-width">
